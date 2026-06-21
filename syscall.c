@@ -6,6 +6,10 @@
 #include "proc.h"
 #include "x86.h"
 #include "syscall.h"
+#include "spinlock.h"
+
+
+
 
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
@@ -245,3 +249,12 @@ syscall(void)
 }
 
 
+
+struct spinlock syscall_count_lock;
+
+void
+syscallinit(void)
+{
+  initlock(&syscall_count_lock, "syscall_count_lock");
+  
+}
