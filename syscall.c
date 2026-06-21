@@ -82,6 +82,9 @@ argstr(int n, char **pp)
   return fetchstr(addr, pp);
 }
 
+int syscall_count[30] = {0};
+
+extern int sys_getcount(void);
 extern int sys_chdir(void);
 extern int sys_close(void);
 extern int sys_dup(void);
@@ -126,6 +129,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[sys_getcount] sys_getcount,
 };
 
 void
