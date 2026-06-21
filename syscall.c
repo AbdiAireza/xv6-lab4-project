@@ -132,15 +132,53 @@ static int (*syscalls[])(void) = {
 [sys_getcount] sys_getcount,
 };
 
-void
+/*void
 syscall(void)
 {
   int num;
   struct proc *curproc = myproc();
 
-  num = curproc->tf->eax;
+  
+  num = curproc->tf->eax; 
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    curproc->tf->eax = syscalls[num]();
+    
+    
+    syscall_count[num]++; 
+    
+    curproc->tf->eax = syscalls[num](); 
+  } else {
+    cprintf("%d %s: unknown sys call %d\n",
+            curproc->pid, curproc->name, num);
+    curproc->tf->eax = -1;
+  }
+}*/
+
+void
+syscall(void)
+{
+  int num;
+  int temp;
+  int k;
+  struct proc *curproc = myproc();
+
+  
+  num = curproc->tf->eax; 
+  
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    
+    
+    temp = syscall_count[num]; 
+    
+    
+    for(k = 0; k < 1000; k++){
+      asm volatile("nop");
+    }
+    
+    syscall_count[num] = temp + 1; 
+    
+    
+    curproc->tf->eax = syscalls[num](); 
+    
   } else {
     cprintf("%d %s: unknown sys call %d\n",
             curproc->pid, curproc->name, num);
