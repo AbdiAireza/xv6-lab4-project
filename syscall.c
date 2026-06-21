@@ -129,7 +129,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-[sys_getcount] sys_getcount,
+[SYS_getcount] sys_getcount,
 };
 
 /*void
@@ -153,7 +153,7 @@ syscall(void)
   }
 }*/
 
-void
+/*void
 syscall(void)
 {
   int num;
@@ -184,4 +184,64 @@ syscall(void)
             curproc->pid, curproc->name, num);
     curproc->tf->eax = -1;
   }
+}*/
+
+/*void
+syscall(void)
+{
+  int num;
+  int temp; 
+  struct proc *curproc = myproc();
+
+  num = curproc->tf->eax; 
+  
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    
+   
+    temp = syscall_count[num]; 
+    
+    yield(); 
+    
+    syscall_count[num] = temp + 1; 
+    
+    
+    curproc->tf->eax = syscalls[num](); 
+    
+  } else {
+    cprintf("%d %s: unknown sys call %d\n",
+            curproc->pid, curproc->name, num);
+    curproc->tf->eax = -1;
+  }
+}*/
+
+void
+syscall(void)
+{
+  int num;
+  int temp;
+  int k;
+  struct proc *curproc = myproc();
+
+  num = curproc->tf->eax; 
+  
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    
+    temp = syscall_count[num]; 
+    
+    
+    for(k = 0; k < 50; k++){
+      asm volatile("nop");
+    }
+    
+    syscall_count[num] = temp + 1; 
+    
+    curproc->tf->eax = syscalls[num](); 
+    
+  } else {
+    cprintf("%d %s: unknown sys call %d\n",
+            curproc->pid, curproc->name, num);
+    curproc->tf->eax = -1;
+  }
 }
+
+
