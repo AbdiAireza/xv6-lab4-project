@@ -260,7 +260,7 @@ syscall(void)
             curproc->pid, curproc->name, num);
     curproc->tf->eax = -1;
   }
-}
+}*/
 
 
 
@@ -271,7 +271,7 @@ syscallinit(void)
 {
   initlock(&syscall_count_lock, "syscall_count_lock");
 
-}*/
+}
 
 
 
