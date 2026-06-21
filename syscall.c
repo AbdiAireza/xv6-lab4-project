@@ -7,6 +7,7 @@
 #include "x86.h"
 #include "syscall.h"
 #include "spinlock.h"
+#include "param.h"
 
 
 
@@ -88,6 +89,11 @@ argstr(int n, char **pp)
 
 int syscall_count[30] = {0};
 
+
+int syscall_count_cpu[NCPU][30]={0};
+
+
+extern int sys_getcpucount(void);
 extern int sys_getcount(void);
 extern int sys_chdir(void);
 extern int sys_close(void);
@@ -134,6 +140,7 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_getcount] sys_getcount,
+[SYS_getcpucount] sys_getcpucount,
 };
 
 /*void
@@ -264,20 +271,21 @@ syscall(void)
 
 
 
-struct spinlock syscall_count_lock;
+//struct spinlock syscall_count_lock;
 
-void
+
+/*void
 syscallinit(void)
 {
   initlock(&syscall_count_lock, "syscall_count_lock");
 
 }
+*/
 
 
 
 
-
-void
+/*void
 syscall(void)
 {
   int num;
@@ -298,6 +306,39 @@ syscall(void)
     
     curproc->tf->eax = syscalls[num](); 
     
+  } else {
+    cprintf("%d %s: unknown sys call %d\n",
+            curproc->pid, curproc->name, num);
+    curproc->tf->eax = -1;
+  }
+}*/
+
+
+
+
+
+
+
+void
+syscall(void)
+{
+  int num;
+  struct proc *curproc = myproc();
+
+  num = curproc->tf->eax;
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    
+   
+    pushcli();           
+    int cid = cpuid();   
+    
+    syscall_count_cpu[cid][num]++; 
+    
+    popcli();
+                
+    
+    
+    curproc->tf->eax = syscalls[num]();
   } else {
     cprintf("%d %s: unknown sys call %d\n",
             curproc->pid, curproc->name, num);

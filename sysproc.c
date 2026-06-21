@@ -91,7 +91,7 @@ sys_uptime(void)
 }
 
 
-int
+/*int
 sys_getcount(void)
 {
   int syscall_num;
@@ -104,4 +104,32 @@ sys_getcount(void)
 
   extern int syscall_count[];
   return syscall_count[syscall_num];
+}
+
+
+*/
+
+
+
+
+int sys_getcount(void)
+{
+  int num;
+  if(argint(0, &num) < 0) return -1;
+  extern int syscall_count_cpu[NCPU][30]; 
+  
+  int total = 0;
+  for(int i = 0; i < NCPU; i++) total += syscall_count_cpu[i][num];
+  return total;
+}
+
+int sys_getcpucount(void)
+{
+  int cpu_id, num;
+  if(argint(0, &cpu_id) < 0 || argint(1, &num) < 0) return -1;
+  
+  extern int syscall_count_cpu[NCPU][30];
+  if(cpu_id < 0 || cpu_id >= NCPU) return -1;
+  
+  return syscall_count_cpu[cpu_id][num];
 }
