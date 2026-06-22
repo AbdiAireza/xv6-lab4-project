@@ -6,6 +6,9 @@
 #include "proc.h"
 #include "x86.h"
 
+
+
+extern struct spinlock prodcons_lock;
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
 extern pde_t *kpgdir;
@@ -31,6 +34,7 @@ main(void)
   pinit();         // process table
   tvinit();        // trap vectors
   binit();         // buffer cache
+  initlock(&prodcons_lock, "prodcons_lock");
   fileinit();      // file table
   //syscallinit();
   ideinit();       // disk 

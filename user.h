@@ -25,6 +25,8 @@ int sleep(int);
 int uptime(void);
 int getcount(int);
 int getcpucount(int, int);
+int produce(int);
+int consume(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

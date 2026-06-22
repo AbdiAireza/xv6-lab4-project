@@ -93,6 +93,8 @@ int syscall_count[30] = {0};
 int syscall_count_cpu[NCPU][30]={0};
 
 
+extern int sys_consume(void);
+extern int sys_produce(void);
 extern int sys_getcpucount(void);
 extern int sys_getcount(void);
 extern int sys_chdir(void);
@@ -141,6 +143,8 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_getcount] sys_getcount,
 [SYS_getcpucount] sys_getcpucount,
+[SYS_produce] sys_produce,
+[SYS_consume] sys_consume,
 };
 
 /*void
