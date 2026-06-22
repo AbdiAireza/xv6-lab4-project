@@ -2,7 +2,7 @@
 #include "stat.h"
 #include "user.h"
 
-void producer(int id, int start, int end) {
+/*void producer(int id, int start, int end) {
     for (int i = start; i <= end; i++) {
         while (produce(i) == -1) {
             
@@ -11,9 +11,27 @@ void producer(int id, int start, int end) {
         printf(1, "producer %d produced %d\n", id, i);
     }
     exit();
+}*/
+
+
+void producer(int id, int start, int end) {
+    for (int i = start; i <= end; i++) {
+        produce(i); 
+        printf(1, "producer %d produced %d\n", id, i);
+    }
+    exit();
 }
 
 void consumer(int id, int count) {
+    for (int i = 0; i < count; i++) {
+        int val = consume(); 
+        printf(1, "consumer %d consumed %d\n", id, val);
+    }
+    exit();
+}
+
+
+/*void consumer(int id, int count) {
     for (int i = 0; i < count; i++) {
         int val;
         while ((val = consume()) == -1) {
@@ -23,7 +41,7 @@ void consumer(int id, int count) {
         printf(1, "consumer %d consumed %d\n", id, val);
     }
     exit();
-}
+}*/
 
 int main(int argc, char *argv[]) {
     

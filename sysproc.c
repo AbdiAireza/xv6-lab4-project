@@ -151,13 +151,14 @@ struct spinlock prodcons_lock;
 
 
 
-int
+/*int
 sys_produce(void)
 {
   int val;
   
   if(argint(0, &val) < 0)
     return -1;
+
 
   acquire(&prodcons_lock); 
 
@@ -195,6 +196,51 @@ sys_consume(void)
   head = (head + 1) % BUFFER_SIZE;
   count--;
 
+  release(&prodcons_lock); 
+  
+  return val; 
+}*/
+
+int
+sys_produce(void)
+{
+  int val;
+  
+  if(argint(0, &val) < 0)
+    return -1; // حتماً باید برگردد!
+
+  acquire(&prodcons_lock); 
+
+  while (count == BUFFER_SIZE){
+    sleep(&buffer, &prodcons_lock);
+  }
+  
+  buffer[tail] = val;
+  tail = (tail + 1) % BUFFER_SIZE;
+  count++;
+
+  wakeup(&buffer);
+
+  release(&prodcons_lock); 
+  return 0; 
+}
+
+int
+sys_consume(void)
+{
+  int val;
+
+  acquire(&prodcons_lock); 
+
+  while (count == 0) {
+    sleep(&buffer, &prodcons_lock);
+  }
+  
+  val = buffer[head];
+  head = (head + 1) % BUFFER_SIZE;
+  count--;
+  
+  wakeup(&buffer);
   release(&prodcons_lock); 
   
   return val; 
