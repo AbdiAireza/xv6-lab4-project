@@ -23,14 +23,14 @@ main(void)
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
   mpinit();        // detect other processors
-  cprintf("Total CPUs detected: %d\n", ncpu);
-
+  
   lapicinit();     // interrupt controller
   seginit();       // segment descriptors
   picinit();       // disable pic
   ioapicinit();    // another interrupt controller
   consoleinit();   // console hardware
   uartinit();      // serial port
+  cprintf("Total CPUs detected: %d\n", ncpu);
   pinit();         // process table
   tvinit();        // trap vectors
   binit();         // buffer cache
